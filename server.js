@@ -12,6 +12,18 @@ var PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Routes
+// =============================================================
+// Will display the notes.html page
+app.get("/notes", function(req, res) {
+    res.sendFile(path.join(__dirname, "public/notes.html"));
+  });
+
+// Will display the index.html page
+app.get("/*", function(req, res) {
+res.sendFile(path.join(__dirname, "public/index.html"));
+});
+
 // Starts the server to begin listening
 // =============================================================
 app.listen(PORT, function() {

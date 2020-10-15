@@ -2,6 +2,7 @@
 // =============================================================
 var express = require("express");
 var path = require("path");
+var fs = require("fs");
 
 // Sets up the Express App
 // =============================================================
@@ -23,6 +24,27 @@ app.get("/notes", function(req, res) {
 app.get("/*", function(req, res) {
 res.sendFile(path.join(__dirname, "public/index.html"));
 });
+
+// Will return all saved notes from database
+app.get("/api/notes", function(req, res) {
+    fs.readFile(path.join(__dirname, "db/db.json"), "utf8", function(err, data){
+        if (err){
+            return console.log(err);
+        }
+        console.log(data);
+        return res.json(data);
+    })
+  });
+
+app.post("/api/notes", function(req, res) {
+    let newNote = req.body;
+
+    console.log(newNote);
+
+    fs.writefile(path.join(__dirname, "db/db.json"), newNote);
+
+    res.json(newNote);
+    });
 
 // Starts the server to begin listening
 // =============================================================

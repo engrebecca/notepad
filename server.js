@@ -28,24 +28,19 @@ app.get("/api/notes", function(req, res) {
             return console.log(err);
         }
         console.log(data);
-        return res.json(data);
+        return res.json(JSON.parse(data));
     })
   });
 
 app.post("/api/notes", function(req, res) {
     let newNote = (req.body);
-    console.log(newNote);
-    // fs.appendFile(path.join(__dirname, "db/db.json"), newNote, function(err){
-    //     if (err){
-    //         return console.log(err);
-    //     }
-    //     return res.json(newNote);
-    // });
     readFileAsync(path.join(__dirname, "db/db.json"), "utf8").then(function(data){
         const notesData = JSON.parse(data);
-        console.log(notesData);
         notesData.push(newNote);
-        console.log(notesData);
+        return notesData;
+    }).then(function(notesData){
+        writeFileAsync(path.join(__dirname, "db/db.json"), JSON.stringify(notesData));
+        return res.json(notesData);
     })
 });
 

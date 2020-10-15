@@ -27,13 +27,14 @@ app.get("/api/notes", function(req, res) {
         if (err){
             return console.log(err);
         }
-        console.log(data);
         return res.json(JSON.parse(data));
     })
   });
 
+// Will add new note to database
 app.post("/api/notes", function(req, res) {
     let newNote = (req.body);
+    newNote.id = newNote.title.replace(/\s+/g, "").toLowerCase();
     readFileAsync(path.join(__dirname, "db/db.json"), "utf8").then(function(data){
         const notesData = JSON.parse(data);
         notesData.push(newNote);
@@ -41,6 +42,19 @@ app.post("/api/notes", function(req, res) {
     }).then(function(notesData){
         writeFileAsync(path.join(__dirname, "db/db.json"), JSON.stringify(notesData));
         return res.json(notesData);
+    })
+});
+
+// Will delete a note from the database
+app.delete("/api/notes/:id", function(req, res) {
+    let chosen = req.params.id;
+    readFileAsync(path.join(__dirname, "db/db.json"),"utf8").then(function(data){
+        const notesData = JSON.parse(data);
+        const remainingNotes = notesData.filter(note => note.id != chosen);
+        return remainingNotes;
+    }).then(function(remainingNotes){
+        writeFileAsync(path.join(__dirname, "db/db.json"), JSON.stringify(remainingNotes));
+        return res.json(remainingNotes);
     })
 });
 
